@@ -304,6 +304,7 @@ func run(healthCheck *metrics.HealthCheck) {
 }
 
 func main() {
+
 	leaderElection := defaultLeaderElectionConfiguration()
 	leaderElection.LeaderElect = true
 
@@ -377,6 +378,8 @@ func main() {
 			},
 		})
 	}
+
+	callHpaWatch();
 }
 
 func defaultLeaderElectionConfiguration() apiserverconfig.LeaderElectionConfiguration {
