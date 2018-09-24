@@ -2,20 +2,16 @@ package hpaConnector
 
 import (
 	"fmt"
-	"io/ioutil"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/pkg/"
-	"k8s.io/client-go/tools/clientcmd"
-	"net/http"
+	"k8s.io/apimachinery/pkg/api/meta"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	kubeclient "k8s.io/client-go/kubernetes"
 )
 
-func watchHpa() {
+func WatchHpa(clientSet kubeclient.Interface) {
 
-	response, err := http.Get("/apis/autoscaling/v1/watch/namespaces/{namespace}/horizontalpodautoscalers/{name}?includeUninitialized=true")
-	if err != nil {
-		fmt.Print("The HTTP request failed with error %s\n", err)
-	} else {
-		data, _ := ioutil.ReadAll(response.Body)
-		fmt.Println(string(data))
-	}
+	hpaWatch, _ := clientSet.AutoscalingV1().HorizontalPodAutoscalers("").Watch(metav1.ListOptions{})
+	data := <-hpaWatch.ResultChan()
+
+	hpa, _ := meta.NewAccessor().Namespace(data.Object)
+	fmt.Println(hpa)
 }

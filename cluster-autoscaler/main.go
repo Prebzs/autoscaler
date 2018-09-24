@@ -37,6 +37,7 @@ import (
 	"k8s.io/autoscaler/cluster-autoscaler/core"
 	"k8s.io/autoscaler/cluster-autoscaler/estimator"
 	"k8s.io/autoscaler/cluster-autoscaler/expander"
+	hpa "k8s.io/autoscaler/cluster-autoscaler/hpaConnector"
 	"k8s.io/autoscaler/cluster-autoscaler/metrics"
 	"k8s.io/autoscaler/cluster-autoscaler/utils/errors"
 	kube_util "k8s.io/autoscaler/cluster-autoscaler/utils/kubernetes"
@@ -474,3 +475,9 @@ func parseSingleGpuLimit(limits string) (config.GpuLimits, error) {
 	}
 	return parsedGpuLimits, nil
 }
+
+func callHpaWatch() {
+	kubeClient := createKubeClient(getKubeConfig())
+	hpa.WatchHpa(kubeClient)
+}
+
