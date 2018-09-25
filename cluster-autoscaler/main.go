@@ -281,6 +281,7 @@ func run(healthCheck *metrics.HealthCheck) {
 	// Start updating health check endpoint.
 	healthCheck.StartMonitoring()
 
+
 	// Autoscale ad infinitum.
 	for {
 		select {
@@ -298,6 +299,7 @@ func run(healthCheck *metrics.HealthCheck) {
 				}
 
 				metrics.UpdateDurationFromStart(metrics.Main, loopStart)
+				callHpaWatch();
 			}
 		}
 	}
@@ -333,7 +335,6 @@ func main() {
 
 	if !leaderElection.LeaderElect {
 		run(healthCheck)
-		callHpaWatch();
 	} else {
 		id, err := os.Hostname()
 		if err != nil {
@@ -347,7 +348,7 @@ func main() {
 		if err != nil {
 			glog.Fatalf("Failed to get nodes from apiserver: %v", err)
 		}
-		callHpaWatch();
+		callHpaWatch()
 		lock, err := resourcelock.New(
 			leaderElection.ResourceLock,
 			*namespace,
