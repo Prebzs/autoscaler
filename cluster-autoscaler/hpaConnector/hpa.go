@@ -1,7 +1,7 @@
 package hpaConnector
 
 import (
-	"fmt"
+	"github.com/golang/glog"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	kubeclient "k8s.io/client-go/kubernetes"
@@ -13,5 +13,6 @@ func WatchHpa(clientSet kubeclient.Interface) {
 	data := <-hpaWatch.ResultChan()
 
 	hpa, _ := meta.NewAccessor().Namespace(data.Object)
-	fmt.Println(hpa)
+	glog.V(1).Info(hpa);
+
 }
