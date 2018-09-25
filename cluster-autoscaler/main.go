@@ -313,7 +313,6 @@ func main() {
 	healthCheck := metrics.NewHealthCheck(*maxInactivityTimeFlag, *maxFailingTimeFlag)
 
 	glog.V(1).Infof("Cluster Autoscaler %s", ClusterAutoscalerVersion)
-	callHpaWatch();
 	correctEstimator := false
 	for _, availableEstimator := range estimator.AvailableEstimators {
 		if *estimatorFlag == availableEstimator {
@@ -323,7 +322,6 @@ func main() {
 	if !correctEstimator {
 		glog.Fatalf("Unrecognized estimator: %v", *estimatorFlag)
 	}
-	callHpaWatch();
 
 	go func() {
 		http.Handle("/metrics", prometheus.Handler())
@@ -331,7 +329,7 @@ func main() {
 		err := http.ListenAndServe(*address, nil)
 		glog.Fatalf("Failed to start metrics: %v", err)
 	}()
-	callHpaWatch();
+
 
 	if !leaderElection.LeaderElect {
 		run(healthCheck)
@@ -349,7 +347,7 @@ func main() {
 		if err != nil {
 			glog.Fatalf("Failed to get nodes from apiserver: %v", err)
 		}
-
+		callHpaWatch();
 		lock, err := resourcelock.New(
 			leaderElection.ResourceLock,
 			*namespace,
